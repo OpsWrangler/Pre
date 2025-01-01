@@ -70,4 +70,4 @@ jobs:
       #     workdir: dist
 
 permissions:
-  pull-requests: write
+  contents: write
