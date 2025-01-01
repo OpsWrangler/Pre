@@ -16,6 +16,9 @@ jobs:
   build:
     runs-on: windows-latest
 
+    permissions:
+      pull-requests: write
+
     steps:
       - uses: actions/checkout@v4
 
@@ -31,7 +34,7 @@ jobs:
           Get-ChildItem -Recurse
 
       - name: release
-        uses: actions/create-release@v2
+        uses: actions/create-release@v1
         id: create_release
         with:
           draft: false
@@ -67,3 +70,4 @@ jobs:
       #   with:
       #     title: MyReleaseMessage
       #     workdir: dist
+
