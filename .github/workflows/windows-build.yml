@@ -42,8 +42,6 @@ jobs:
           # body_path: CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        permissions:
-          pull-requests: write
 
       - name: upload windows artifact
         uses: actions/upload-release-asset@v1
@@ -54,8 +52,7 @@ jobs:
           asset_path: ./dist/main.exe
           asset_name: main.exe
           asset_content_type: application/exe
-        permissions:
-          pull-requests: write
+
 
       # - name: Release
       #   uses: softprops/action-gh-release@v2
@@ -72,3 +69,5 @@ jobs:
       #     title: MyReleaseMessage
       #     workdir: dist
 
+permissions:
+  pull-requests: write
