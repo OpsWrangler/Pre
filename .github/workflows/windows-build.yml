@@ -21,6 +21,7 @@ jobs:
           Invoke-WebRequest https://github.com/upx/upx/releases/download/v4.2.4/upx-4.2.4-win64.zip -UseBasicParsing -OutFile upx.zip
           mkdir .\upx
           Expand-Archive -LiteralPath upx.zip -DestinationPath .\upx
+          Get-ChildItem -Recurse
           cp .\upx\upx.exe .
           pyinstaller --onefile .\main.py
-          dir dist
+          
