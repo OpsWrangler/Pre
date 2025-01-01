@@ -19,4 +19,4 @@ jobs:
           python -m pip install jinja2
           python -m pip install pyinstaller
           pyinstaller --onefile .\main.py
-          dir
+          dir dist
