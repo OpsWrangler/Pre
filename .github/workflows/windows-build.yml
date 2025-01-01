@@ -29,6 +29,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         # if: startsWith(github.ref, 'refs/tags/')
         with:
+          name: "Current"
           files: ./dist/main.exe
 
       # - name: Create a Release
