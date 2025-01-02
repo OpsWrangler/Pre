@@ -1,0 +1,32 @@
+name: "Multi-architecture builds"
+
+on:
+  # push:
+  #   branches: [ "main" ]
+  # pull_request:
+  #   branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version'
+        type: string
+        required: true
+
+jobs:
+  build-windows:
+    permissions:
+      id-token: read
+      contents: write
+    secrets: inherit
+    uses: windows-build.yml
+      with:
+        version: ${{ github.event.inputs.version }}
+  build-linux:
+    permissions:
+      id-token: read
+      contents: write
+    secrets: inherit
+    uses: windows-build.yml
+      with:
+        version: ${{ github.event.inputs.version }}
+
