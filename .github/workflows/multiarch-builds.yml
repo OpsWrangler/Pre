@@ -1,4 +1,4 @@
-name: Multi-architecture builds
+name: MultiArchitecture Builds
 
 on:
   # push:
@@ -13,8 +13,8 @@ on:
         required: true
 
 jobs:
-  
   Create_Release:
+    runs-on: ubuntu-24.04
     steps:
       - name: release
         uses: actions/create-release@v1
@@ -30,20 +30,58 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
+
   Build_Windows:
-    permissions:
-      id-token: read
-      contents: write
-    secrets: inherit
-    uses: windows-build.yml
-      with:
-        version: ${{ github.event.inputs.version }}
-  
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build for Windows
+        shell: pwsh
+        run: |
+          python -m pip install -r requirements.txt
+          # Invoke-WebRequest https://github.com/upx/upx/releases/download/v4.2.4/upx-4.2.4-win64.zip -UseBasicParsing -OutFile upx.zip
+          # Expand-Archive -LiteralPath upx.zip
+          # Get-ChildItem -Recurse
+          # cp .\upx\upx-4.2.4-win64\upx.exe .
+          pyinstaller --onefile .\main.py
+          mv ./dist/main.exe ./dist/pre_windows_amd64.exe
+          # Get-ChildItem -Recurse
+
+      - name: Upload Windows Artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/pre_windows_amd64.exe
+          asset_name: Windows (amd64)
+          asset_content_type: application/exe
+
   Build_Linux:
-    permissions:
-      id-token: read
-      contents: write
-    secrets: inherit
-    uses: linux-build.yml
-      with:
-        version: ${{ github.event.inputs.version }}
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build for Linux
+        run: |
+          python -m pip install -r requirements.txt
+          pyinstaller --onefile ./main.py
+          mv ./dist/main ./dist/pre_linux_amd64
+          ls -alhR
+
+      - name: Upload Linux Artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/pre_linux_amd64
+          asset_name: Linux (amd64)
+          asset_content_type: application/vnd.debian.binary-package
+
+
+
+
+
+
+permissions:
+  contents: write
