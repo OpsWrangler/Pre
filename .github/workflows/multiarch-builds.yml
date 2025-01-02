@@ -26,7 +26,6 @@ jobs:
       id-token: read
       contents: write
     secrets: inherit
-    uses: windows-build.yml
+    uses: linux-build.yml
       with:
         version: ${{ github.event.inputs.version }}
-
