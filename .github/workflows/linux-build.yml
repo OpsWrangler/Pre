@@ -23,7 +23,7 @@ jobs:
         shell: pwsh
         run: |
           python -m pip install -r requirements.txt
-          pyinstaller --onefile .\main.py
+          pyinstaller --onefile ./main.py
           ls -alhR
 
       - name: release
