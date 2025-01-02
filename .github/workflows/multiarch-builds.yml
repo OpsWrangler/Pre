@@ -46,7 +46,7 @@ jobs:
           # Get-ChildItem -Recurse
           # cp .\upx\upx-4.2.4-win64\upx.exe .
           pyinstaller --onefile .\main.py
-          mv ./dist/main.exe ./dist/pre_windows_amd64.exe
+          # mv ./dist/main.exe ./dist/pre_windows_amd64.exe
           # Get-ChildItem -Recurse
 
       - name: Upload Windows Artifact
@@ -55,8 +55,8 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{needs.Create_Release.outputs.release_url}}
-          asset_path: ./dist/pre_windows_amd64.exe
-          asset_name: Windows (amd64)
+          asset_path: ./dist/main.exe
+          asset_name: windows_amd64.exe
           asset_content_type: application/exe
 
   Build_Linux:
@@ -77,7 +77,7 @@ jobs:
         run: |
           python -m pip install -r requirements.txt
           pyinstaller --onefile ./main.py
-          mv ./dist/main ./dist/pre_linux_amd64
+          # mv ./dist/main ./dist/pre_linux_amd64
           ls -alhR
 
       - name: Upload Linux Artifact
@@ -86,8 +86,8 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{needs.Create_Release.outputs.release_url}}
-          asset_path: ./dist/pre_linux_amd64
-          asset_name: Linux (amd64)
+          asset_path: ./dist/main
+          asset_name: linux_amd64
           asset_content_type: application/vnd.debian.binary-package
 
 
