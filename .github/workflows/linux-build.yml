@@ -14,22 +14,17 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build for Windows
+      - name: Build for Linux
         shell: pwsh
         run: |
           python -m pip install -r requirements.txt
-          # Invoke-WebRequest https://github.com/upx/upx/releases/download/v4.2.4/upx-4.2.4-win64.zip -UseBasicParsing -OutFile upx.zip
-          # Expand-Archive -LiteralPath upx.zip
-          # Get-ChildItem -Recurse
-          # cp .\upx\upx-4.2.4-win64\upx.exe .
           pyinstaller --onefile .\main.py
-          mv ./dist/main.exe ./dist/pre.exe
-          # Get-ChildItem -Recurse
+          ls -alhR
 
       - name: release
         uses: actions/create-release@v1
@@ -51,9 +46,9 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/pre.exe
-          asset_name: pre.exe
-          asset_content_type: application/exe
+          asset_path: ./dist/main.sh
+          asset_name: main.sh
+          asset_content_type: application/sh
 
 permissions:
   contents: write
