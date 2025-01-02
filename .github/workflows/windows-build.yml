@@ -28,7 +28,7 @@ jobs:
           # Get-ChildItem -Recurse
           # cp .\upx\upx-4.2.4-win64\upx.exe .
           pyinstaller --onefile .\main.py
-          mv ./dist/main.exe ./dist/pre.exe
+          mv ./dist/main.exe ./dist/pre_windows_amd64.exe
           # Get-ChildItem -Recurse
 
       - name: release
@@ -51,8 +51,8 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/pre.exe
-          asset_name: pre.exe
+          asset_path: ./dist/pre_windows_amd64.exe
+          asset_name: Windows (amd64)
           asset_content_type: application/exe
 
 permissions:
