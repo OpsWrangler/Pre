@@ -23,12 +23,12 @@ jobs:
         shell: pwsh
         run: |
           python -m pip install -r requirements.txt
-          Invoke-WebRequest https://github.com/upx/upx/releases/download/v4.2.4/upx-4.2.4-win64.zip -UseBasicParsing -OutFile upx.zip
-          Expand-Archive -LiteralPath upx.zip
-          Get-ChildItem -Recurse
-          cp .\upx\upx-4.2.4-win64\upx.exe .
+          # Invoke-WebRequest https://github.com/upx/upx/releases/download/v4.2.4/upx-4.2.4-win64.zip -UseBasicParsing -OutFile upx.zip
+          # Expand-Archive -LiteralPath upx.zip
+          # Get-ChildItem -Recurse
+          # cp .\upx\upx-4.2.4-win64\upx.exe .
           pyinstaller --onefile .\main.py
-          Get-ChildItem -Recurse
+          # Get-ChildItem -Recurse
 
       - name: release
         uses: actions/create-release@v1
