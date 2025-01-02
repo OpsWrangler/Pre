@@ -15,7 +15,7 @@ on:
 jobs:
   Create_Release:
     outputs:
-      release_url: ${{ steps.release.outputs.upload_url }}
+      release_url: ${{ steps.create_release.outputs.upload_url }}
     runs-on: ubuntu-24.04
     steps:
       - name: release
