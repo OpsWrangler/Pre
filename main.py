@@ -1,11 +1,10 @@
 import jinja2
-import pickle
+# import pickle
 import argparse
-from os import sep, listdir, path, makedirs, remove, _exit
+from os import sep, listdir, path, makedirs, remove, _exit, walk
 from shutil import copy2, copytree, rmtree
 from glob import glob
 from pathlib import Path
-
 
 
 def custom_copy(src, dst, symlinks=False, ignore=None):
@@ -14,7 +13,6 @@ def custom_copy(src, dst, symlinks=False, ignore=None):
         if _cmd_line_args.debug:
             print(f"Copying from {s} to {d}")
         copy2(s, d)
-
 
     if path.exists(src):
         if path.isdir(src):
@@ -48,48 +46,44 @@ def handleTemplates():
 
         print(f"\n\n")
 
-    templateLoader = jinja2.FileSystemLoader(searchpath="./")
+    template_input_dirs = _cmd_line_args.template_input_dirs or [f"test{sep}.pree{sep}templates{sep}"]
+    template_output_dir = _cmd_line_args.template_output_dir or "."
+
+    templateLoader = jinja2.FileSystemLoader(searchpath="") #searchpath is empty as all filepaths we feed to Jinja are absolute
 
     templateEnv = jinja2.Environment(
         loader=templateLoader, 
         trim_blocks=True, 
-        lstrip_blocks=True
-        )
+        lstrip_blocks=True)
 
-    current_dir = path.realpath(__file__)
-    template_input_dir = _cmd_line_args.template_input_dir or f".pre{sep}templates{sep}"
-    template_demp_dir_relative = f"{sep}.pre{sep}.pre_temp{sep}"
-    template_temp_dir_full = f"{path.dirname(current_dir)}{template_demp_dir_relative}"
-    template_output_dir = "."
 
-    if _cmd_line_args.debug:
-        print(f"Copying temporary files from: {template_input_dir}, outputting to {template_temp_dir_full}")
+    for a_template_source_dir in template_input_dirs:
+        a_template_source_dir = path.join(a_template_source_dir, '') #Add a trailing slash if not present
+        for a_source_filepath in glob(f'{a_template_source_dir}/**/*', recursive=True, include_hidden=True):
+            if(Path.is_file(Path(a_source_filepath))):
+                a_source_filepath_for_jinja = Path(a_source_filepath).as_posix()
+                a_source_filepath_relative_to_output = str(a_source_filepath).replace(a_template_source_dir,'')
+                dest_filename = Path(path.join(Path(template_output_dir), Path(a_source_filepath_relative_to_output)))
 
-    custom_copy(template_input_dir, template_temp_dir_full)
+                template = templateEnv.get_template(a_source_filepath_for_jinja)
+                try:
+                    outputFromJinja = template.render(_template_vars_as_set)
+                except Exception as e:
+                    print(f"Jinja template error, exiting: {e}")
+                    _exit()
 
-    for filepath in glob(f'{template_temp_dir_full}/**/*', recursive=True):
-        dest_filename = filepath.replace(".pre.", '.')
-        dest_filename = Path(str(dest_filename).replace(template_temp_dir_full, f"{template_output_dir}{sep}"))
-        if ".pre." in filepath:
-            filepath_for_jinja = Path(str(filepath).replace(template_temp_dir_full, template_demp_dir_relative)).as_posix()
-            print(filepath_for_jinja)
-            template = templateEnv.get_template(filepath_for_jinja)
-            outputFromJinja = template.render(_template_vars_as_set)
+                if _cmd_line_args.debug:
+                    print(f"Processing template: {a_source_filepath}, outputting to {dest_filename}")
 
-            if _cmd_line_args.debug:
-                print(f"Processing template: {filepath}, outputting to {filepath_for_jinja}")
-
-            # If the output file is not in the same path as this script, make the directory tree needed
-            if f"{sep}" in str(dest_filename):
-                Path(dest_filename.parent).mkdir(parents=True, exist_ok=True)
-            with open(dest_filename, 'w') as dest_file:
-                dest_file.write(outputFromJinja)
-        else:
-            custom_copy(filepath, dest_filename)
-
-    # Clean up, remove temp dir
-    rmtree(template_temp_dir_full)
-
+                # If the output directory structure does not exist, make it
+                try:
+                    if sep in str(dest_filename):
+                        Path(dest_filename.parent).mkdir(parents=True, exist_ok=True)
+                    with open(dest_filename, 'w') as dest_file:
+                        dest_file.write(outputFromJinja)
+                except Exception as e:
+                    print(f"Error outputting processed template {dest_filename}:\n{e}")
+                    exit(1)
 
 
 def handleCmdLineArgs():
@@ -104,9 +98,11 @@ def handleCmdLineArgs():
     parser.add_argument("--debug", 
                         help="Enable debug output (Could include output of secret values!)",
                         action="store_true")
-    parser.add_argument("--template_input_dir", 
-                        help="Input directory for templates"
-                        )
+    parser.add_argument("--template_input_dirs",
+                        help="Input director(ies) for templates",
+                        nargs='+')
+    parser.add_argument("--template_output_dir",
+                        help="Output directory for assembled templates")
     _cmd_line_args = parser.parse_args()
 
 
@@ -116,7 +112,7 @@ def handleCmdLineArgs():
             try:
                 _template_vars[split_pair[0].strip()] = split_pair[1].lstrip()
             except IndexError as e:
-                print("ERROR: There is an issue with the template_vars provided, maybe with an equal sign?")
+                print("ERROR: There is an issue with the template_vars provided") # User issue, potentially due to equal sign
 
 
     # if _cmd_line_args.debug:
@@ -124,26 +120,8 @@ def handleCmdLineArgs():
     #         print(_template_vars)
 
 
-
 # MAIN #
 if __name__ == "__main__":
     _template_vars = {}
     handleCmdLineArgs()
     handleTemplates()
-
-
-
-
-
-
-
-
-
-
-# with open("dotpre.pkl", 'ab') as pickle_file:
-#     pickle.dump(_template_vars, pickle_file) 
-
-# with open("dotpre.pkl", 'rb') as pickle_file:
-#     _data = pickle.load(pickle_file)
-
-# print(_data)
