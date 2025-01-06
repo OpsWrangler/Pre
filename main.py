@@ -46,7 +46,7 @@ def handleTemplates():
 
         print(f"\n\n")
 
-    template_input_dirs = _cmd_line_args.template_input_dirs or [f"test{sep}.pree{sep}templates{sep}"]
+    template_input_dirs = _cmd_line_args.template_input_dirs or [f".pree{sep}templates{sep}"]
     template_output_dir = _cmd_line_args.template_output_dir or "."
 
     templateLoader = jinja2.FileSystemLoader(searchpath="") #searchpath is empty as all filepaths we feed to Jinja are absolute
