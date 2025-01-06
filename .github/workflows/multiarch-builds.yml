@@ -43,7 +43,7 @@ jobs:
         with:
           upload_url: ${{needs.Create_Release.outputs.release_url}}
           asset_path: ./dist/main.exe
-          asset_name: pre_windows_amd64.exe
+          asset_name: pree_windows_amd64.exe
           asset_content_type: application/exe
 
   Build_Linux:
@@ -72,7 +72,7 @@ jobs:
         with:
           upload_url: ${{needs.Create_Release.outputs.release_url}}
           asset_path: ./dist/main
-          asset_name: pre_linux_amd64
+          asset_name: pree_linux_amd64
           asset_content_type: application/vnd.debian.binary-package
 
       - name: Upload Source Artifact
@@ -82,7 +82,7 @@ jobs:
         with:
           upload_url: ${{needs.Create_Release.outputs.release_url}}
           asset_path: main.py
-          asset_name: pre.py
+          asset_name: pree.py
           asset_content_type: text/plain
 
 
