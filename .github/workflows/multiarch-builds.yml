@@ -7,6 +7,10 @@ on:
         description: 'Version'
         type: string
         required: true
+      prerelease_param:
+        description: 'Is Prerelease?'
+        type: boolean
+        default: false
 
 jobs:
   Create_Release:
@@ -19,7 +23,7 @@ jobs:
         id: create_release
         with:
           draft: false
-          prerelease: false
+          prerelease: ${{ github.event.inputs.prerelease_param }}
           release_name: Version ${{ github.event.inputs.version }}
           tag_name: ${{ github.event.inputs.version }}
         env:
@@ -37,7 +41,7 @@ jobs:
           pyinstaller --onefile .\main.py
 
       - name: Upload Windows Artifact
-        uses: actions/upload-release-asset@v1
+        uses: actions/upload-release-asset@v2
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
@@ -51,15 +55,15 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v4
-      - name: Get Release URL
-        id: get_url
-        uses: noobly314/share-data@v1
-        with:
-          share-id: this_share_id
-          mode: get
-          key: upload_url
-      - name: Use Value
-        run: echo "${{ steps.get_url.outputs.data }}"
+      # - name: Get Release URL
+      #   id: get_url
+      #   uses: noobly314/share-data@v1
+      #   with:
+      #     share-id: this_share_id
+      #     mode: get
+      #     key: upload_url
+      # - name: Use Value
+      #   run: echo "${{ steps.get_url.outputs.data }}"
       - name: Build for Linux
         run: |
           python -m pip install -r requirements.txt
