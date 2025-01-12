@@ -1,3 +1,5 @@
+version = "{{pree_version}}"
+
 import jinja2
 # import pickle
 import argparse
@@ -10,8 +12,8 @@ from pathlib import Path
 def custom_copy(src, dst, symlinks=False, ignore=None):
 
     def custom_copy2(s, d):
-        if _cmd_line_args.debug:
-            print(f"Copying from {s} to {d}")
+        # if _cmd_line_args.debug:
+        #     print(f"Copying from {s} to {d}")
         copy2(s, d)
 
     if path.exists(src):
@@ -34,7 +36,13 @@ def custom_copy(src, dst, symlinks=False, ignore=None):
 
 
 def handleTemplates():
-    
+
+    template_input_dirs = _cmd_line_args.template_input_dirs or [f".pree{sep}templates{sep}"]
+    template_output_dir = _cmd_line_args.template_output_dir or "."
+    templateLoader = jinja2.FileSystemLoader(searchpath="") #searchpath is empty as all filepaths we feed to Jinja are absolute
+
+    print(f"Template source folder(s): {template_input_dirs}\nTemplate destination folder: {template_output_dir}")
+
     # Simple dictionary to list 
     _template_vars_as_set = set([(k,v) for k,v in _template_vars.items()])
 
@@ -45,11 +53,6 @@ def handleTemplates():
             print(f"{x[0]} = {x[1]}")
 
         print(f"\n\n")
-
-    template_input_dirs = _cmd_line_args.template_input_dirs or [f".pree{sep}templates{sep}"]
-    template_output_dir = _cmd_line_args.template_output_dir or "."
-
-    templateLoader = jinja2.FileSystemLoader(searchpath="") #searchpath is empty as all filepaths we feed to Jinja are absolute
 
     templateEnv = jinja2.Environment(
         loader=templateLoader, 
@@ -91,18 +94,23 @@ def handleCmdLineArgs():
     global _cmd_line_args
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--template_destination")
+
+    parser.add_argument("action",
+                        help="The action for Pree to take. This is required, and needs to be one of: \"templates\" or \"vault\" ")
+    parser.add_argument("action2",
+                        help="Second part of action for Pree to take. For \"templates\" there are no second actions. For \"vault\", ...",
+                        nargs='?') #nargs='?' means optional parameter in this usage
+    parser.add_argument("--debug",
+                        help="Enable debug output (Could include output of secret values!)",
+                        action="store_true")
     parser.add_argument("--template_vars",
                         help=r"List of variable pairs ('name = value' 'name2 = value 2')",
                         nargs='+')
-    parser.add_argument("--debug", 
-                        help="Enable debug output (Could include output of secret values!)",
-                        action="store_true")
     parser.add_argument("--template_input_dirs",
-                        help="Input director(ies) for templates",
+                        help=f"Input director(ies) for templates. By default, Pree loads templates from one folder: .{sep}.pree{sep}templates{sep}",
                         nargs='+')
     parser.add_argument("--template_output_dir",
-                        help="Output directory for assembled templates")
+                        help=f"Output directory for assembled templates. By default, Pree outputs processed templates to: .{sep}")
     _cmd_line_args = parser.parse_args()
 
 
@@ -122,6 +130,15 @@ def handleCmdLineArgs():
 
 # MAIN #
 if __name__ == "__main__":
-    _template_vars = {}
+    print(f"Pree v{version or '???'}\n")
     handleCmdLineArgs()
-    handleTemplates()
+
+    match _cmd_line_args.action:
+        case "templates": 
+            _template_vars = {}
+            handleTemplates()
+        case "vault":
+            print("Vault functions will be in a future version")
+        case _:
+            print(f"\"{_cmd_line_args.action}\" is not a valid action!")
+            _exit(1)

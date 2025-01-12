@@ -66,8 +66,10 @@ jobs:
       #   run: echo "${{ steps.get_url.outputs.data }}"
       - name: Build for Linux
         run: |
+          cp main.py main_new.py
+          python main.py --template_input_dirs . --template_vars 'pree_version = ${{ github.event.inputs.version }}'
           python -m pip install -r requirements.txt
-          pyinstaller --onefile ./main.py
+          pyinstaller --onefile ./main_new.py
 
       - name: Upload Linux Artifact
         uses: actions/upload-release-asset@v1
@@ -75,7 +77,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{needs.Create_Release.outputs.release_url}}
-          asset_path: ./dist/main
+          asset_path: ./dist/main_new
           asset_name: pree_linux_amd64
           asset_content_type: application/vnd.debian.binary-package
 
@@ -85,7 +87,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{needs.Create_Release.outputs.release_url}}
-          asset_path: main.py
+          asset_path: main_new.py
           asset_name: pree.py
           asset_content_type: text/plain
 
