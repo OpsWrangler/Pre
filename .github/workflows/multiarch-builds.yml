@@ -54,7 +54,7 @@ jobs:
 
   Build_Linux:
     needs: Create_Release
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v4
       # - name: Get Release URL
@@ -70,9 +70,10 @@ jobs:
       - name: Build for Linux
         run: |
           ls /usr/bin/python*
-          cp main.py main_new.py
-          python main.py templates --template_input_dirs . 
+          mkdir new
+          cp main.py ./new/main_new.py
           python -m pip install -r requirements.txt
+          python main.py templates --template_input_dirs ./new
           pyinstaller --onefile ./main_new.py
 
       - name: Upload Linux Artifact

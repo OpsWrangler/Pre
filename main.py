@@ -134,11 +134,20 @@ if __name__ == "__main__":
     _template_vars = {}
     handleCmdLineArgs()
 
-    match _cmd_line_args.action:
-        case "templates": 
-            handleTemplates()
-        case "vault":
-            print("Vault functions will be in a future version")
-        case _:
-            print(f"\"{_cmd_line_args.action}\" is not a valid action!")
-            _exit(1)
+    if _cmd_line_args.action == "templates":
+        handleTemplates()
+    elif _cmd_line_args.action == "vault":
+        print("Vault functions will be in a future version")
+    else:
+        print(f"\"{_cmd_line_args.action}\" is not a valid action!")
+        _exit(1)
+
+    # Python 3.10 and above
+    # match _cmd_line_args.action:
+    #     case "templates": 
+    #         handleTemplates()
+    #     case "vault":
+    #         print("Vault functions will be in a future version")
+    #     case _:
+    #         print(f"\"{_cmd_line_args.action}\" is not a valid action!")
+    #         _exit(1)
