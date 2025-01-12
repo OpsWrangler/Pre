@@ -37,9 +37,10 @@ jobs:
       - name: Build for Windows
         shell: pwsh
         run: |
-          copy main.py main_new.py
-          python main.py templates --template_input_dirs . --template_vars 'pree_version = ${{ github.event.inputs.version }}'
+          md new
+          copy main.py .\new\main_new.py
           python -m pip install -r requirements.txt
+          python main.py templates --template_input_dirs .\new --template_vars 'pree_version = ${{ github.event.inputs.version }}'
           pyinstaller --onefile .\main.py
 
       - name: Upload Windows Artifact
@@ -73,7 +74,7 @@ jobs:
           mkdir new
           cp main.py ./new/main_new.py
           python -m pip install -r requirements.txt
-          python main.py templates --template_input_dirs ./new
+          python main.py templates --template_input_dirs ./new --template_vars 'pree_version = ${{ github.event.inputs.version }}'
           pyinstaller --onefile ./main_new.py
 
       - name: Upload Linux Artifact
