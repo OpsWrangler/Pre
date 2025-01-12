@@ -52,7 +52,7 @@ jobs:
 
   Build_Linux:
     needs: Create_Release
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       # - name: Get Release URL
@@ -66,6 +66,7 @@ jobs:
       #   run: echo "${{ steps.get_url.outputs.data }}"
       - name: Build for Linux
         run: |
+          ls /usr/bin/python*
           cp main.py main_new.py
           python main.py --template_input_dirs . --template_vars 'pree_version = ${{ github.event.inputs.version }}'
           python -m pip install -r requirements.txt
