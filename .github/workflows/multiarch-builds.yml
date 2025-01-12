@@ -66,11 +66,12 @@ jobs:
       #     key: upload_url
       # - name: Use Value
       #   run: echo "${{ steps.get_url.outputs.data }}"
+      # python main.py templates --template_input_dirs . --template_vars 'pree_version = ${{ github.event.inputs.version }}'
       - name: Build for Linux
         run: |
           ls /usr/bin/python*
           cp main.py main_new.py
-          python main.py templates --template_input_dirs . --template_vars 'pree_version = ${{ github.event.inputs.version }}'
+          python main.py templates --template_input_dirs . 
           python -m pip install -r requirements.txt
           pyinstaller --onefile ./main_new.py
 
