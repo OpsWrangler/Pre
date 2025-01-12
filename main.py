@@ -131,11 +131,11 @@ def handleCmdLineArgs():
 # MAIN #
 if __name__ == "__main__":
     print(f"Pree v{version or '???'}\n")
+    _template_vars = {}
     handleCmdLineArgs()
 
     match _cmd_line_args.action:
         case "templates": 
-            _template_vars = {}
             handleTemplates()
         case "vault":
             print("Vault functions will be in a future version")
