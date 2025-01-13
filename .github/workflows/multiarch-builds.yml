@@ -41,7 +41,7 @@ jobs:
           copy main.py .\new\main_new.py
           python -m pip install -r requirements.txt
           python main.py templates --template_input_dirs .\new --template_vars 'pree_version = ${{ github.event.inputs.version }}'
-          pyinstaller --onefile .\main.py
+          pyinstaller --onefile .\main_new.py
 
       - name: Upload Windows Artifact
         uses: actions/upload-release-asset@v1
@@ -58,16 +58,6 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      # - name: Get Release URL
-      #   id: get_url
-      #   uses: noobly314/share-data@v1
-      #   with:
-      #     share-id: this_share_id
-      #     mode: get
-      #     key: upload_url
-      # - name: Use Value
-      #   run: echo "${{ steps.get_url.outputs.data }}"
-      # python main.py templates --template_input_dirs . --template_vars 'pree_version = ${{ github.event.inputs.version }}'
       - name: Build for Linux
         run: |
           ls /usr/bin/python*
