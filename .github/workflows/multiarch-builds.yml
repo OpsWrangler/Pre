@@ -39,8 +39,10 @@ jobs:
         run: |
           md new
           copy main.py .\new\main_new.py
-          py -3 -m pip install -r requirements.txt
-          py -3 main.py templates --template_input_dirs .\new --template_vars 'pree_version = ${{ github.event.inputs.version }}'
+          py -3 -m venv pree_build
+          .\pree_build\Scripts\Activate.ps1
+          pip install -r requirements.txt
+          python main.py templates --template_input_dirs .\new --template_vars 'pree_version = ${{ github.event.inputs.version }}'
           pyinstaller --onefile .\main_new.py
 
       - name: Upload Windows Artifact
